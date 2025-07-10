@@ -26,7 +26,7 @@ It simplifies the process of discovering, managing, and participating in sports 
 
 | Frontend | Backend | Database | Other |
 |----------|---------|----------|-------|
-| HTML5, CSS3, Bootstrap 4 | Node.js, Express.js | MySQL | AJAX, jQuery | Gemini API
+| HTML5, CSS3,JAVASCRIPT Bootstrap 4 | Node.js, Express.js | MySQL | AJAX, jQuery | Gemini API
 
 ---
 
