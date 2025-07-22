@@ -50,7 +50,9 @@
     }
     /*------*/
 
-
+*{
+  box-sizing: border-box;
+}
 
 
 html,body{
@@ -298,3 +300,61 @@ a:hover{
   margin-top:40px;
   margin-bottom: 20px;
 }
+ @media (max-width: 768px) {
+    #nav {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    #nleft, #ncenter, #nright {
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      align-items: flex-start;
+    }
+    #ncenter {
+      padding-top: 10px;
+    }
+  }
+
+  /* SERVICE CARDS WRAP NICELY */
+  @media (max-width: 768px) {
+    .services-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+    .service-card {
+      width: 90%;
+    }
+  }
+
+  /* MISSION SECTION STACKING */
+  @media (max-width: 768px) {
+    .mission-section {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .mission-image, .mission-text {
+      width: 100%;
+    }
+  }
+
+  /* REACH US SECTION */
+  @media (max-width: 768px) {
+    .reach-section {
+      flex-direction: column;
+      padding: 40px 20px;
+    }
+    .reach-form, .reach-image {
+      width: 100%;
+    }
+  }
+
+  /* TEAM SECTION */
+  @media (max-width: 768px) {
+    .services-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
