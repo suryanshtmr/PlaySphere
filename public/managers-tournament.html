@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="kuchModule">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tournaments</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+
+        input[type="button"] {
+            padding: 10px 18px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+
+    <script>
+        var mymodule = angular.module("kuchModule", []);
+
+        mymodule.controller("kuchController", function ($scope, $http) {
+            $scope.jsonArray = [];
+            $scope.showTable = false;
+
+            $scope.doFetchAll = function () {
+                if (!$scope.userEmail) {
+                    alert("Please enter your email.");
+                    return;
+                }
+                
+
+                var url = "/do-fetch-all-users?email=" + encodeURIComponent($scope.userEmail);
+
+
+                $http.get(url).then(function (response) {
+                    $scope.jsonArray = response.data;
+                    $scope.showTable = true;
+                }, function (response) {
+                    alert("❌ Error fetching data: " + JSON.stringify(response.data));
+                    $scope.showTable = false;
+                });
+            };
+
+            $scope.init = function () {
+    $scope.userEmail = localStorage.getItem("activeUser");  // auto-fill email field
+    if ($scope.userEmail) {
+        $scope.doFetchAll(); // optionally auto-fetch on page load
+    }
+};
+
+
+            $scope.doDelete = function (rid) {
+                var url = "/delete-one?rid=" + encodeURIComponent(rid);
+
+                $http.get(url).then(function (response) {
+                    alert(response.data);
+                    $scope.doFetchAll(); 
+                }, function (response) {
+                    alert("❌ Error deleting record: " + JSON.stringify(response.data));
+                });
+            };
+        });
+    </script>
+</head>
+<body ng-controller="kuchController"  ng-init="init()">
+    <div class="container">
+        <h2>Manage Tournament </h2>
+        <input type="text" ng-model="userEmail" placeholder="Enter your email" readonly>
+        <input type="button" value="Fetch My Records"  ng-click="doFetchAll()">
+
+        
+        <table ng-if="showTable && jsonArray.length > 0">
+            <tr>
+                <th>Sr.No</th>
+                <th>Email ID</th>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>City</th>
+                <th>Sport</th>
+                <th>Age Range</th>
+                <th>Fee</th>
+                <th>Prize</th>
+                <th>Contact</th>
+                <th>Action</th>
+            </tr>
+
+            <tr ng-repeat="obj in jsonArray">
+                <td>{{$index + 1}}</td>
+                <td>{{obj.emailid}}</td>
+                <td>{{obj.event}}</td>
+                <td>{{obj.doe}}</td>
+                <td>{{obj.toe}}</td>
+                <td>{{obj.city}}</td>
+                <td>{{obj.sports}}</td>
+                <td>{{obj.minage}} - {{obj.maxage}}</td>
+                <td>{{obj.fee}}</td>
+                <td>{{obj.prize}}</td>
+                <td>{{obj.contact}}</td>
+                <td><input type="button" value="Remove" ng-click="doDelete(obj.rid)"></td>
+            </tr>
+        </table>
+
+        
+        <p ng-if="showTable && jsonArray.length === 0" style="margin-top:20px; color: red;">
+            ⚠️ No records found for this email.
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>document</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f3f6fa;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      padding: 30px 40px;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ff4d6d;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    input[type="email"],
+    textarea {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fdfdfd;
+      font-size: 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 10px 24px;
+      border: none;
+      background-color: #ff4d6d;
+      color: white;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e03c5a;
+    }
+
+    #preview {
+      width: 100px;
+      height: 100px;
+      border: 1px dashed #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: #888;
+      border-radius: 8px;
+    }
+  </style>
+  <script>
+    function showPrev(fileRef,prevRef)
+         {
+                         const [file] = fileRef.files
+                            if (file) {
+                                prevRef.src = URL.createObjectURL(file)
+                            }
+        }
+
+
+  </script>
+  <script>
+   $(document).ready(function(){
+    $("#btnFetchWithAjax").click(function(){
+      let obj={
+        type:"get",
+        url:"/get-one",
+        data:{
+          txtEmail:$("#txtEmail").val()
+        }
+      };
+      $.ajax(obj).then(
+        function(responseJsonAry){
+          if(responseJsonAry.length===0){
+            alert("no record found");
+            return;
+          }
+           let orgname =responseJsonAry[0].orgname;
+            let regnumber=responseJsonAry[0].regnumber;
+            let address=responseJsonAry[0].address;
+            let city=responseJsonAry[0].city;
+            let sports=responseJsonAry[0].sports;
+            let website=responseJsonAry[0].website;
+            let insta=responseJsonAry[0].insta;
+            let head=responseJsonAry[0].head;
+            let contact=responseJsonAry[0].contact;
+            let picurl=responseJsonAry[0].picurl;
+            let otherinfo=responseJsonAry[0].otherinfo;
+             $("#txtOrgName").val(orgname);
+             $("#txtRegNo").val(regnumber);
+             $("#txtAddress").val(address);
+             $("#txtCity").val(city);
+             $("#txtDeals").val(sports);
+             $("#txtWebsite").val(website);
+             $("#txtInsta").val(insta);
+             $("#txtHead").val(head);
+             $("#txtContact").val(contact);
+             $("#prev").prop("src",picurl);
+             $("#txtOther").val(otherinfo);
+             $("#hdn").val(picurl);
+        },
+        function(err){
+          if(err.responseJSON && err.responseJSON.error)
+          alert("Error:"+err.responseJSON.error);
+        else
+        alert("unknown error:"+Json.stringify(err));
+        }
+      )
+    })
+   })
+
+  </script>
+  <script>
+   function showUser()
+    {
+        let activeUser=localStorage.getItem("activeUser");
+        document.getElementById("txtEmail").value=activeUser;
+    }
+  </script>
+</head>
+<body onload="showUser();">
+
+  <form class="form-container" action="/org-details" method="post" enctype="multipart/form-data">
+    <input type="hidden" id="hdn" name="hdn">
+    <h2>Organization Details</h2>
+
+    <div class="grid">
+      <div>
+        <label for="txtEmail">Email ID</label>
+        <input type="text" id="txtEmail"  name="txtEmail" placeholder="enter email" readonly/>
+      </div>
+      <div style="display: flex; align-items: flex-end;">
+        <button type="button"   id="btnFetchWithAjax"style="width: 100%;">Search</button>
+      </div>
+
+      <div>
+        <label for="txtOrgName">Org. Name</label>
+        <input type="text" id="txtOrgName"  name="txtOrgName" placeholder="enter Organization name"/>
+      </div>
+      <div>
+        <label for="txtRegNo">Registration Number</label>
+        <input type="text" id="txtRegNo" name="txtRegNo"  placeholder="enter registration no"/>
+      </div>
+
+      <div>
+        <label for="txtAddress">Address</label>
+        <input type="text" id="txtAddress" name="txtAddress" placeholder="enter address" />
+      </div>
+      <div>
+        <label for="txtCity">City</label>
+        <input type="text" id="txtCity" name="txtCity" placeholder="enter city"/>
+      </div>
+
+      <div class="full-width">
+        <label for="txtDeals">Deals in Sports</label>
+        <input type="text" id="txtDeals" name="txtDeals"  placeholder="enter sports"/>
+      </div>
+
+      <div>
+        <label for="txtWebsite">Website</label>
+        <input type="text" id="txtWebsite" name="txtWebsite" placeholder="http://www.website.com" />
+      </div>
+      <div>
+        <label for="txtInsta">Instagram Link</label>
+        <input type="text" id="txtInsta" name="txtInsta" placeholder="http://instagram.@username.com"/>
+      </div>
+
+      <div>
+        <label for="txtHead">Org. Head</label>
+        <input type="text" id="txtHead" name="txtHead" placeholder="enter name of head" />
+      </div>
+      <div>
+        <label for="txtContact">Contact Number</label>
+        <input type="text" id="txtContact" name="txtContact" placeholder="contact number" maxlength="10"/>
+      </div>
+
+      <div>
+        <label for="fileCert">Registration Certificate Pic</label>
+        <input type="file" id="profilePic" name="profilePic"  onchange="showPrev(profilePic,prev)"  placeholder="upload pic"/>
+      </div>
+      <div id="preview" >
+        <img src="" id="prev" width="100" height="100" alt="">
+      </div>
+
+      <div class="full-width">
+        <label for="txtOther">Other Information</label>
+        <textarea id="txtOther" name="txtOther"></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Submit</button>
+      <button type="submit" formaction="/update-user">Modify</button>
+    </div>
+  </form>
+
+</body>
+</html>

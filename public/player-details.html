@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+      font-weight: 500;
+    }
+
+    #prev1, #prev2 {
+      border-radius: 0.5rem;
+      object-fit: cover;
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background-color: #0d6efd;
+      border: none;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #f0f0f0;
+    }
+
+    #proemail {
+      font-size: 0.9rem;
+
+    }
+  
+
+
+  </style>
+
+  <script>
+    function showPrev(fileRef, prevRef) {
+      const [file] = fileRef.files;
+      if (file) {
+        prevRef.src = URL.createObjectURL(file);
+      }
+    }
+
+    $(document).ready(function () {
+      $("#getdata").click(function () {
+        $.ajax({
+          type: "get",
+          url: "/get-data",
+          data: { txtEmail: $("#txtEmail").val() }
+        }).then(function (responseJsonAry) {
+          const data = responseJsonAry[0];
+          $("#prev1").attr("src", data.acardpicurl);
+          $("#prev2").attr("src", data.profilepicurl);
+          $("#name").val(data.name);
+          $("#dob").val(data.dob);
+          $("#gender").val(data.gender);
+          $("#txtAddress").val(data.address);
+          $("#txtContact").val(data.contact);
+          $("#txtGame").val(data.game);
+          $("#txtInfo").val(data.otherinfo);
+        }).fail(function (err) {
+          alert(err.message);
+        });
+      });
+
+      $("#txtEmail5").blur(function () {
+        $.ajax({
+          type: "get",
+          url: "/chk-email-pro",
+          data: { txtEmail2: $("#txtEmail5").val() }
+        }).then(function (resp) {
+          if ($("#txtEmail5").val() === "") {
+            $("#proemail").html("Email ID required").removeClass().addClass("text-danger");
+          } else if (resp === "Invalid") {
+            $("#proemail").html("Invalid Email ID").removeClass().addClass("text-danger");
+          } else {
+            $("#proemail").html("").removeClass();
+          }
+          $("#getdata").prop("disabled", resp !== "Valid");
+        }).fail(function (err) {
+          alert(err);
+        });
+      });
+    });
+  </script>
+  <script>
+    function showUser()
+    {
+        let activeUser=localStorage.getItem("activeUser");
+        document.getElementById("txtEmail").value=activeUser;
+    }
+  </script>
+</head>
+
+<body onload="showUser();">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="form-container">
+          <h4 class="mb-4 text-center">Player Profile Details</h4>
+          <form class="row g-3" method="post" enctype="multipart/form-data">
+
+            <!-- Email -->
+            <div class="col-md-6">
+              <label for="txtEmail5" class="form-label">Email ID</label>
+              <input type="email" class="form-control" id="txtEmail" name="txtEmail" placeholder="Enter Email"  readonly>
+              <span id="proemail" class="text-danger"></span>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button type="button" class="btn btn-secondary w-100" id="getdata" >Get Data</button>
+            </div>
+
+            <!-- Aadhaar Upload -->
+            <div class="col-md-6">
+              <label class="form-label">Upload Aadhaar (Front)</label>
+              <input type="file" class="form-control" name="aadhar" id="aadhar" onchange="showPrev(aadhar, prev1)" required>
+              <img src="" width="100" height="100" id="prev1" class="mt-2 border rounded" alt="Preview">
+            </div>
+
+            <!-- Profile Upload -->
+            <div class="col-md-6">
+              <label class="form-label">Upload Profile Picture</label>
+              <input type="file" class="form-control" name="profilePic" id="profilePic" onchange="showPrev(profilePic, prev2)" required>
+              <img src="" width="100" height="100" id="prev2" class="mt-2 border rounded" alt="Preview">
+            </div>
+
+            <!-- Personal Info -->
+            <div class="col-md-5">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" disabled>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" class="form-control" id="dob" disabled>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Gender</label>
+              <input type="text" class="form-control" id="gender" disabled>
+            </div>
+
+            <!-- Address and Contact -->
+            <div class="col-md-7">
+              <label class="form-label">Address</label>
+              <input type="text" class="form-control" id="txtAddress" name="txtAddress" placeholder="Enter Address">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Contact Number</label>
+              <input type="text" class="form-control" id="txtContact" name="txtContact" placeholder="e.g. 9876543210" maxlength="10">
+            </div>
+
+            <!-- Game & Info -->
+            <div class="col-md-4">
+              <label class="form-label">Sport</label>
+              <input type="text" class="form-control" id="txtGame" name="txtGame" placeholder="e.g. Cricket, Football">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Other Information</label>
+              <textarea class="form-control" id="txtInfo" name="txtInfo" placeholder="Add more about your organization..." style="height: 90px;"></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+              <button type="submit" class="btn btn-primary" formaction="/server-profile">Upload Data</button>
+              <button type="submit" class="btn btn-outline-secondary" formaction="/Modify-profile">Modify</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

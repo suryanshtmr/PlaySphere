@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>document</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 30px 40px;
+      margin-top: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-group input, 
+    .form-group select {
+      width: 80%;
+      padding: 10px;
+      border: 1.6px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-left:10px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #e63946;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background-color: #d62828;
+    }
+
+    .note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: gray;
+    }
+    h2{
+        color:red;
+    }
+  </style>
+  <script>
+    $(document).ready(function(){
+      $("#btnPublish").click(function(){
+        let emailid=$("#txtEmail").val();
+        let event=$("#txtEventTitle").val();
+        let doe=$("#Date").val();
+        let toe=$("#Time").val();
+        let address=$("#txtAddress").val();
+        let city=$("#txtCity").val();
+        let sports=$("#txtSport").val();
+        let minage=$("#txtMinAge").val();
+        let maxage=$("#txtMaxAge").val();
+        let lastdate=$("#RegDeadline").val();
+        let fee=$("#txtFee").val();
+        let prize=$("#txtPrize").val();
+        let contact=$("#txtContact").val();
+
+        $.ajax({
+          type:"post",
+          url:"/tournament",
+          contentType: "application/json",
+          data:JSON.stringify({
+            txtEmail:emailid,
+            txtEventTitle:event,
+              Date:doe,
+              Time:toe,
+            txtAddress:address,
+            txtCity:city,
+            txtSport:sports,
+            txtMinAge:minage,
+            txtMaxAge:maxage,
+          
+            RegDeadline:lastdate,
+            txtFee:fee,
+            txtPrize:prize,
+            txtContact:contact
+          }),
+           success: function(response) {
+                    alert("Publish successful: " + response);
+                },
+                error: function(err) {
+                    alert("Error during Publish");
+                }
+        })
+      })
+    })
+  </script>
+  <script>
+   function showUser()
+    {
+        let activeUser=localStorage.getItem("activeUser");
+        document.getElementById("txtEmail").value=activeUser;
+    }
+  </script>
+</head>
+<body onload="showUser();">
+
+  <div class="form-container">
+    <h2>Post a Tournament</h2>
+
+    <div class="form-group">
+      <label for="email">Organizer Email</label>
+      <input type="email" id="txtEmail" name="txtEmail">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="eventTitle">Event Title</label>
+        <input type="text" id="txtEventTitle" name="txtEventTitle" required>
+      </div>
+      <div class="form-group">
+        <label for="date">Date</label>
+        <input type="date" id="Date" name="Date" required>
+      </div>
+      <div class="form-group">
+        <label for="time">Time</label>
+        <input type="time" id="Time" name="Time" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="location">Location/Address</label>
+        <input type="text" id="txtLocation" name="txtLocation" required>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" id="txtCity" name="txtCity" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="category">Sport</label>
+        <select id="txtSport" name="txtSport" required>
+          <option value="">Select Sport</option>
+          <option value="Cricket">Cricket</option>
+          <option value="Football">Football</option>
+          <option value="Athletics">Athletics</option>
+          <option value="Swimming">Swimming</option>
+          <option value="Kabbaddi">Kabbaddi</option>
+          <option value="Kho-Kho">Kho-Kho</option>
+          <option value="Polo">Polo</option>
+          <option value="Golf">Golf</option>
+          <option value="Basketball">Basketball</option>
+          <option value="Badminton">Badminton</option>
+          <option value="Lawn Tennis">Lawn Tennis</option>
+          <option value="Table Tennis">Table Tennis</option>
+          <option value="Chess">Chess</option>
+          <option value="Karting">Karting</option>
+          <option value="Squash">Squash</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="minAge">Min Age</label>
+        <input type="number" id="txtMinAge" name="txtMinAge" required>
+      </div>
+
+      <div class="form-group">
+        <label for="maxAge">Max Age</label>
+        <input type="number" id="txtMaxAge" name="txtMaxAge" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="regDeadline">Last Date of Registration</label>
+        <input type="date" id="RegDeadline" name="RegDeadline" required>
+      </div>
+      <div class="form-group">
+        <label for="fee">Fee (INR)</label>
+        <input type="number" id="txtFee" name="txtFee" required>
+      </div>
+      <div class="form-group">
+        <label for="prize">Prize Money (INR)</label>
+        <input type="number" id="txtPrize" name="txtPrize">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="contactPerson">Contact</label>
+      <input type="text" id="txtContactPerson" name="txtContactPerson" required maxlength="10">
+    </div>
+
+    <button type="button" class="submit-btn" id="btnPublish">Publish Event</button>
+  </div>
+</body>
+
+</html>

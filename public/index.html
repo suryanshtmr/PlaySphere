@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>document</title>
+
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+
+
+
+
+    
+    
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+  $(document).ready(function () {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/;
+
+    function validateSingleField(inputId, regex, errorId, errorMsg) {
+      const value = $(`#${inputId}`).val().trim();
+      if (!regex.test(value)) {
+        $(`#${errorId}`).text(errorMsg);
+        return false;
+      } else {
+        $(`#${errorId}`).text("");
+        return true;
+      }
+    }
+
+    // Real-time validation listeners
+    $("#txtEmail").on("input", function () {
+      validateSingleField("txtEmail", emailRegex, "signupEmailErr", "Invalid email format.");
+    });
+
+    $("#txtPwd").on("input", function () {
+      validateSingleField("txtPwd", passwordRegex, "signupPwdErr", "Min 6 chars, letters & numbers.");
+    });
+
+    $("#txtEmail2").on("input", function () {
+      validateSingleField("txtEmail2", emailRegex, "loginEmailErr", "Invalid email format.");
+    });
+
+    $("#txtPwd2").on("input", function () {
+      validateSingleField("txtPwd2", passwordRegex, "loginPwdErr", "Min 6 chars, letters & numbers.");
+    });
+
+    // Show/hide password
+    $("#toggleSignupPwd").click(() => togglePwd("txtPwd", "toggleSignupPwd"));
+    $("#toggleLoginPwd").click(() => togglePwd("txtPwd2", "toggleLoginPwd"));
+
+    function togglePwd(inputId, iconId) {
+      let input = $(`#${inputId}`);
+      let icon = $(`#${iconId} i`);
+      if (input.attr("type") === "password") {
+        input.attr("type", "text");
+        icon.removeClass("fa-eye").addClass("fa-eye-slash");
+      } else {
+        input.attr("type", "password");
+        icon.removeClass("fa-eye-slash").addClass("fa-eye");
+      }
+    }
+
+    function validateForm(emailId, pwdId, emailErrId, pwdErrId) {
+      const isEmailValid = validateSingleField(emailId, emailRegex, emailErrId, "Invalid email format.");
+      const isPwdValid = validateSingleField(pwdId, passwordRegex, pwdErrId, "Min 6 chars, letters & numbers.");
+      return isEmailValid && isPwdValid;
+    }
+
+    // Signup
+    $("#btnSignup").click(function () {
+      const email = $("#txtEmail").val().trim();
+      const password = $("#txtPwd").val().trim();
+      const utype = $("#comboUser").val();
+
+      if (!validateForm("txtEmail", "txtPwd", "signupEmailErr", "signupPwdErr")) return;
+
+      $.ajax({
+        type: "POST",
+        url: "/signup",
+        contentType: "application/json",
+        data: JSON.stringify({
+          txtEmail: email,
+          txtPwd: password,
+          comboUser: utype,
+        }),
+        success: function (response) {
+          alert("Signup successful: " + response);
+          $("#signupModalCustom").modal("hide");
+        },
+        error: function () {
+          alert("Error during signup");
+        },
+      });
+    });
+
+    // Login
+    $("#btnLogin").click(function () {
+      const email = $("#txtEmail2").val().trim();
+      const password = $("#txtPwd2").val().trim();
+
+      if (!validateForm("txtEmail2", "txtPwd2", "loginEmailErr", "loginPwdErr")) return;
+
+      $.ajax({
+        type: "POST",
+        url: "/do-login",
+        contentType: "application/json",
+        data: JSON.stringify({
+          txtEmail2: email,
+          txtPwd2: password,
+        }),
+        success: function (resp) {
+          alert("*" + resp + "*");
+
+          if (resp === "Blocked") alert("User is blocked");
+          else if (resp === " Wrong emailid / password") alert("Invalid emailid/password");
+          else if (resp === "Player") {
+            localStorage.setItem("activeUser", email);
+            location.href = "player-dash.html";
+          } else if (resp === "Organizer") {
+            localStorage.setItem("activeUser", email);
+            location.href = "org-dash.html";
+          } else if (resp === "Admin") {
+            location.href = "dashAdmin.html";
+          }
+        },
+        error: function () {
+          alert("Server error");
+        },
+      });
+    });
+  });
+</script>
+
+
+</head>
+<body>
+  <div id="main">
+  <div id="working-area">
+    <!-- Navbar -->
+    <div id="nav">
+      <div id="nleft">
+        <img src="pics/ChatGPT_Image_Jul_20__2025__01_33_28_PM-removebg-preview.png" class="foto" alt="">
+        <h2>PlaySphere</h2>
+      </div>
+      <div id="ncenter">
+        <a href="#home-area" class="nav-link">Home</a>
+        <a href="#mission-area" class="nav-link">Mission</a>
+        <a href="#aboutus-area" class="nav-link">Team</a>
+        <a href="#reach-area" class="nav-link">Reach Us</a>
+      </div>
+      <div id="nright">
+        <button class="btn btn-danger" data-toggle="modal" data-target="#signupModalCustom">Signup</button>
+        <button class="btn btn-secondary" data-toggle="modal" data-target="#loginModalCustom">Login</button>
+      </div>
+    </div>
+
+    <!-- Services Section -->
+    <div class="section" id="home-area">
+      <h2>Our Services</h2>
+      <div class="services-cards">
+        <div class="service-card">
+          <div class="icon-circle">🏆</div>
+          <h3>Tournaments</h3>
+          <p>Join or organize sports tournaments across cities with ease.</p>
+        </div>
+        <div class="service-card">
+          <div class="icon-circle">👤</div>
+          <h3>Organizers</h3>
+          <p>Dedicated tools for event managers and organizers to post events.</p>
+        </div>
+        <div class="service-card">
+          <div class="icon-circle">⚽</div>
+          <h3>Sports Persons</h3>
+          <p>Search for tournaments based on your sport and city preferences.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mission Section -->
+    <section class="mission-section" id="mission-area">
+      <div class="mission-image">
+        <img src="pics/Track_and_field-cuate-removebg-preview.png" alt="mission">
+      </div>
+      <div class="mission-text">
+        <h2>Our Mission</h2>
+        <p>At PlaySphere, our mission is to revolutionize grassroots sports by seamlessly connecting players and organizers through a unified, accessible platform. We aim to empower local talent, simplify tournament management, and foster inclusive participation — all under one digital roof.</p>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <div class="section" id="aboutus-area">
+      <h2>Meet the Minds Behind This</h2>
+      <div class="services-cards">
+        <div class="service-card" style="width:300px; height:250px;">
+          <div class="icon-circle"><img src="pics/rajesh sir pic.png" class="pic"></div>
+          <h3>Rajesh Bansal Sir, BCE</h3>
+          <p>Provided Key Guidance</p>
+        </div>
+        <div class="service-card" style="width:300px;height:250px;">
+          <div class="icon-circle"><img src="pics/suryansh pic.png" class="pic"></div>
+          <h3>Suryansh Tomar</h3>
+          <p>Developer
+            <a href="https://www.linkedin.com/in/suryansh-tomar-4b81a0230"><i class="fab fa-linkedin" style="font-size: 24px;color: #0077b5;"></i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reach Us Section -->
+    <div class="reach-section" id="reach-area" >
+      <div class="reach-image">
+        <img src="pics/renith-r-A9VpotrPr1k-unsplash.jpg" alt="">
+      </div>
+      <div class="reach-form">
+        <h2>Reach Us</h2>
+        <form action="https://formspree.io/f/xzzvdnjz" method="post">
+          <div class="form-group">
+            <label for="name">Name</label><br>
+            <input type="text" name="name"  class="form-control" placeholder="Your Name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label><br>
+            <input type="email"  name="email" class="form-control" placeholder="Your Email">
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label><br>
+            <textarea name="message" class="form-control" rows="4" placeholder="Your Message"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    
+    
+
+<!-- Modal HTML -->
+<div class="modal fade" id="signupModalCustom" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Sign Up</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="customSignupForm">
+          <div class="form-group">
+            <label for="txtEmail">Email ID</label>
+            <input type="email" class="form-control" id="txtEmail" required >
+            <div id="signupEmailErr" class="text-danger small mt-1"></div>
+          </div>
+          <div class="form-group">
+            <label for="txtPwd">Password</label>
+            <input type="password" class="form-control" id="txtPwd" required>
+            <span id="toggleSignupPwd" style="cursor:pointer; position: absolute;right:10px;top:48%;transform: translateY(-50%); margin-right: 10px;">
+              <i class="fa fa-eye"></i>
+            </span>
+            <div id="signupPwdErr" class="text-danger small mt-1"></div>
+          </div>
+          <div class="form-group">
+            <label for="comboUser">User Type</label>
+            <select class="form-control" id="comboUser">
+              <option>Player</option>
+              <option>Organizer</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-dark-red w-100" id="btnSignup">Signup</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Login Modal -->
+<div class="modal fade" id="loginModalCustom" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="customLoginForm">
+          <div class="form-group">
+            <label for="txtEmail2">Email ID</label>
+            <input type="email" class="form-control" id="txtEmail2" required>
+            <div id="loginEmailErr" class="text-danger small mt-1"></div>
+          </div>
+          <div class="form-group">
+            <label for="txtPwd2">Password</label>
+            <input type="password" class="form-control" id="txtPwd2" required>
+            <span id="toggleLoginPwd" style="cursor:pointer; position:absolute; right:10px; top:65%;transform: translateY(-50%); margin-right: 10px;">
+              <i class="fa fa-eye"></i>
+            </span>
+            <div id="loginPwdErr" class="text-danger small mt-1"></div>
+          </div>
+          <button type="button" class="btn btn-dark-red w-100" id="btnLogin">Login</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+   
+
+</body>
+</html>
