@@ -2,8 +2,8 @@
 A full-stack platform connecting sports players with tournament organizers.
 # 🏆 PlaySphere – Sports Tournament Discovery Platform
 
-> **Status:** 🚧 In Development – Deployment by **July 20, 2025**  
-> [Live Demo (Coming Soon)](#)
+> **Status:** 🚧 Developed– Deployed by -
+> https://playsphere-ipgh.onrender.com
 
 PlaySphere is a dynamic web platform built to connect **sports players** with **tournament organizers**.  
 It simplifies the process of discovering, managing, and participating in sports events with a sleek, responsive UI and robust backend.
